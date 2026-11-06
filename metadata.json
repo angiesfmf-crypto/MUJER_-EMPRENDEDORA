@@ -1,0 +1,8 @@
+{
+  "name": "Mujer Emprendedora - Palmira",
+  "description": "Aplicación Android nativa con Kotlin y Jetpack Compose orientada a fortalecer los emprendimientos liderados por mujeres rurales de Palmira, Valle del Cauca, Colombia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

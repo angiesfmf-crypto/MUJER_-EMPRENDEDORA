@@ -1,0 +1,97 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Entity Validators
+    function isValidUserProfile(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 150 &&
+             data.phone is string && data.phone.size() >= 7 && data.phone.size() <= 50 &&
+             data.businessName is string && data.businessName.size() > 0 && data.businessName.size() <= 150 &&
+             data.pinSalt is string && data.pinSalt.size() <= 128 &&
+             data.pinHash is string && data.pinHash.size() <= 256;
+    }
+
+    function isValidProduct(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 150 &&
+             data.price is number && data.price >= 0 &&
+             data.stock is number &&
+             data.unit is string && data.unit.size() <= 50 &&
+             data.category is string && data.category.size() <= 100;
+    }
+
+    function isValidSale(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.date is number &&
+             data.totalAmount is number && data.totalAmount >= 0 &&
+             data.paymentMethod is string && data.paymentMethod.size() <= 100;
+    }
+
+    function isValidLearningState(data) {
+      return data.userId is string && data.userId.size() <= 128;
+    }
+
+    // Connection testing
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+
+    // Users collection (Emprendedoras - Autenticación centralizada con Celular + PIN)
+    match /users/{userId} {
+      allow get: if isValidId(userId);
+      allow list: if true;
+      allow create: if isValidId(userId) && isValidUserProfile(incoming());
+      allow update: if isValidId(userId) && isValidUserProfile(incoming());
+      allow delete: if false;
+    }
+
+    // Products collection (Inventario rural por emprendedora)
+    match /products/{productId} {
+      allow get: if isValidId(productId);
+      allow list: if true;
+      allow create: if isValidId(productId) && isValidProduct(incoming());
+      allow update: if isValidId(productId) && isValidProduct(incoming());
+      allow delete: if isValidId(productId);
+    }
+
+    // Sales collection (Ventas e historial financiero)
+    match /sales/{saleId} {
+      allow get: if isValidId(saleId);
+      allow list: if true;
+      allow create: if isValidId(saleId) && isValidSale(incoming());
+      allow update: if isValidId(saleId) && isValidSale(incoming());
+      allow delete: if false;
+    }
+
+    // Learning States (Capacitación TIC y progreso educativo)
+    match /learning_states/{userId} {
+      allow get: if isValidId(userId);
+      allow list: if true;
+      allow create: if isValidId(userId) && isValidLearningState(incoming());
+      allow update: if isValidId(userId) && isValidLearningState(incoming());
+      allow delete: if false;
+    }
+
+    // Default deny for any unspecified path
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

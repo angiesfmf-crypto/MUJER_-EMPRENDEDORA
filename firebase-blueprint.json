@@ -1,0 +1,107 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Perfil de la mujer emprendedora rural en Palmira",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "documentId": { "type": "string", "maxLength": 50 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "email": { "type": "string", "maxLength": 150 },
+        "businessName": { "type": "string", "maxLength": 150 },
+        "businessCategory": { "type": "string", "maxLength": 100 },
+        "location": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 500 },
+        "pinSalt": { "type": "string", "maxLength": 128 },
+        "pinHash": { "type": "string", "maxLength": 256 },
+        "failedLoginAttempts": { "type": "number" },
+        "lockoutUntil": { "type": "number" },
+        "isDemoProfile": { "type": "boolean" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["id", "name", "phone", "businessName"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Producto artesanal, agrícola o procesado del emprendimiento",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 500 },
+        "price": { "type": "number" },
+        "stock": { "type": "number" },
+        "unit": { "type": "string", "maxLength": 50 },
+        "category": { "type": "string", "maxLength": 100 },
+        "minStockAlert": { "type": "number" },
+        "imageUrl": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["id", "userId", "name", "price", "stock", "unit", "category"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "Registro de venta, entrega y forma de pago del emprendimiento",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "date": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "subtotalAmount": { "type": "number" },
+        "deliveryCost": { "type": "number" },
+        "paymentMethod": { "type": "string", "maxLength": 100 },
+        "amountPaid": { "type": "number" },
+        "pendingBalance": { "type": "number" },
+        "deliveryType": { "type": "string", "maxLength": 50 },
+        "deliveryLocation": { "type": "string", "maxLength": 200 },
+        "customerName": { "type": "string", "maxLength": 150 },
+        "customerPhone": { "type": "string", "maxLength": 30 },
+        "customerNotes": { "type": "string", "maxLength": 500 },
+        "synced": { "type": "boolean" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "userId", "date", "totalAmount", "paymentMethod"]
+    },
+    "UserLearningState": {
+      "title": "UserLearningState",
+      "description": "Estado de progreso en la Escuela de Aprendizaje TIC rural",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "completedLessonIds": { "type": "array" },
+        "lastVisitedModuleId": { "type": "string", "maxLength": 100 },
+        "lastVisitedLessonId": { "type": "string", "maxLength": 100 },
+        "quizResults": { "type": "object" },
+        "certificates": { "type": "array" },
+        "downloadedModuleIds": { "type": "array" },
+        "lastUpdated": { "type": "number" }
+      },
+      "required": ["userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Perfil de cuenta de la emprendedora rural"
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Inventario de productos por emprendedora"
+    },
+    "/sales/{saleId}": {
+      "schema": { "$ref": "#/entities/Sale" },
+      "description": "Registro de ventas de cada emprendedora"
+    },
+    "/learning_states/{userId}": {
+      "schema": { "$ref": "#/entities/UserLearningState" },
+      "description": "Progreso y certificados académicos por usuaria"
+    }
+  }
+}
